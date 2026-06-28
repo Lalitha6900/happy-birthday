@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday! 🎂</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #ffeef8 0%, #e2ebf0 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .screen {
+            display: none;
+            width: 90%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.96);
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+            text-align: center;
+            animation: fadeIn 0.6s ease-in-out;
+            position: relative;
+            z-index: 5;
+        }
+        .active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* 1. PIN Screen */
+        #pin-screen input {
+            padding: 12px;
+            font-size: 20px;
+            border: 2px solid #ff4757;
+            border-radius: 8px;
+            width: 160px;
+            text-align: center;
+            margin-bottom: 20px;
+            outline: none;
+        }
+        button {
+            padding: 12px 30px;
+            background: linear-gradient(45deg, #ff4757, #ff6b81);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+        }
+        button:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 71, 87, 0.5);
+        }
+        #error-msg { color: #ff4757; margin-top: 15px; font-weight: bold; }
+
+        /* 2. Letter Screen */
+        .envelope {
+            font-size: 90px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            display: inline-block;
+        }
+        .envelope:hover { transform: scale(1.15) rotate(5deg); }
+        .letter-content {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .letter-left {
+            flex: 1;
+            min-width: 290px;
+            background: #fffdf0;
+            padding: 25px;
+            border-left: 5px solid #ff4757;
+            border-radius: 4px;
+            text-align: left;
+            box-shadow: 2px 4px 15px rgba(0,0,0,0.05);
+            line-height: 1.6;
+        }
+        .letter-left h3 { color: #ff4757; margin-bottom: 10px; }
+        .letter-right {
+            flex: 1;
+            min-width: 290px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .letter-right img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        /* 3. Cake Screen */
+        .cake-img { 
+            width: 240px; 
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            animation: bounce 2s infinite; 
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+        .birthday-wish { font-size: 32px; color: #ff4757; margin: 20px 0 10px 0; font-weight: bold; }
+        .cake-matter { font-size: 18px; color: #444; line-height: 1.7; font-style: italic; }
+
+        /* 4. Final Photo Screen */
+        .final-img { 
+            width: 100%; 
+            max-width: 420px; 
+            border-radius: 15px; 
+            border: 6px solid white; 
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25); 
+        }
+        .final-quotes {
+            font-size: 19px;
+            color: #2d3436;
+            margin-top: 20px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+        
+        /* Pure Heart Floating Layer over everything! */
+        .heart-element {
+            position: absolute;
+            bottom: -60px;
+            animation: floatUp 4s linear forwards;
+            z-index: 9999 !important; /* Overlap elements directly on screens */
+            pointer-events: none;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+            50% { opacity: 0.9; }
+            100% { transform: translateY(-115vh) translateX(40px) rotate(120deg); opacity: 0; }
+        }
+        .next-btn { margin-top: 30px; }
+    </style>
+</head>
+<body>
+
+    <!-- Background Music -->
+    <audio id="bg-music" src="music.mp3" loop></audio>
+
+    <!-- 1. PIN SCREEN -->
+    <div id="pin-screen" class="screen active">
+        <h2 style="color: #333; margin-bottom: 10px;">A Special Surprise is Waiting! 🎁</h2>
+        <p style="margin-bottom: 25px; color: #666; font-weight: 500;">Nee birthday surprise lock ayyi undi, correct PIN kottu bngrm!</p>
+        <input type="password" id="pin-input" placeholder="Enter PIN" maxlength="4"> <br>
+        <button onclick="checkPin()">Unlock Happiness ✨</button>
+        <div id="error-msg"></div>
+    </div>
+
+    <!-- 2. LETTER SCREEN -->
+    <div id="letter-screen" class="screen">
+        <div id="closed-envelope" onclick="openLetter()">
+            <div class="envelope">✉️</div>
+            <p style="font-size: 19px; color: #2c3e50; font-weight: bold; letter-spacing: 0.5px;">
+                Neekosam oka surprise undhi letter open chey raa yedava! 😍
+            </p>
+        </div>
+        
+        <div id="opened-letter" class="letter-content">
+            <div class="letter-left">
+                <h3>Hey Bangaram! ❤️</h3>
+                <p>"Prapancham lo entho mandhi unna.. nee lanti oka crazy and mental friend dorakadam nijangane naa adrushtam! Evaru unna lekapoyina prathi situation lo 'nenu unna ra neeku' ani nuvvu cheppe dhairyam vundey.. adhi chaalu ra naku."</p><br>
+                <p>Nuvvu pakkana unte aa kikk-e veru maama! Ee smile eppudu ilaage undali, edho temporary ga kadhu, life long navvuthu undu. You mean a lot to me! 😘</p>
+            </div>
+            <div class="letter-right">
+                <img src="photo1.jpg" alt="Photo 1">
+                <img src="photo2.jpg" alt="Photo 2">
+                <img src="photo3.jpg" alt="Photo 3">
+            </div>
+            <div style="width: 100%;"><button class="next-btn" onclick="goToCake()">Next Content Chudu ➡️</button></div>
+        </div>
+    </div>
+
+    <!-- 3. CAKE SCREEN -->
+    <div id="cake-screen" class="screen">
+        <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=500&auto=format&fit=crop" class="cake-img" alt="Delicious Birthday Cake">
+        <div class="birthday-wish">Happy Birthday ra Maama! 🎂🥳</div>
+        <div class="cake-matter">
+            <p>"Prathi okkariki gunde untundi, kani aa gunde lo space preminche vallaki isthe.. space line icche right hand lo niku mathrame istha!" 😉🔥</p><br>
+            <p>Devudu neeku manchi health, clarity (konchem tension thagginchuko) and lots of love ivvali ani korukuntuna. Cake ready ga undi, treat eppudo ekkado chepthe ready ga unnam ikkada! Have a blast!</p>
+        </div>
+        <button class="next-btn" onclick="goToFinal()">Next Surprise ➡️</button>
+    </div>
+
+    <!-- 4. FINAL PHOTO SCREEN -->
+    <div id="final-screen" class="screen">
+        <h2 style="margin-bottom: 25px; color: #ff4757; font-family: 'Georgia', serif;">My Favorite Person Forever ❤️</h2>
+        <img src="iddari_photo.jpg" class="final-img" alt="Iddari Photo">
+        
+        <!-- Flirting & Lovely Friendship Quotes Section -->
+        <div class="final-quotes">
+            <p style="color: #ff3838; font-size: 21px; font-weight: 700; font-style: italic;">
+                "Nuvvu naa daggara unte chalu ra bangaram, prapancham lo unna eh andhamaina chotu kuda mee thoti saripodu!" 💞
+            </p>
+            <p style="margin-top: 15px; color: #333; font-size: 18px;">
+                "Nee navvu chusthe naa stress antha mayam aypoddi. Koti mandhi vachina mana place yevaru thukkoleru. Life long nuvvu na thode undali, nenu nee needaga untanu!" 😘✨
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const music = document.getElementById('bg-music');
+        let effectInterval;
+
+        function checkPin() {
+            const input = document.getElementById('pin-input').value;
+            const error = document.getElementById('error-msg');
+            
+            if(input === '2906') {
+                document.getElementById('pin-screen').classList.remove('active');
+                document.getElementById('letter-screen').classList.add('active');
+            } else {
+                error.innerHTML = "Oops! please enter correct pin bngrm 🥺";
+            }
+        }
+
+        function openLetter() {
+            document.getElementById('closed-envelope').style.display = 'none';
+            document.getElementById('opened-letter').style.display = 'flex';
+            music.play().catch(error => { console.log("Audio trigger processed."); });
+        }
+
+        function goToCake() {
+            document.getElementById('letter-screen').classList.remove('active');
+            document.getElementById('cake-screen').classList.add('active');
+        }
+
+        function goToFinal() {
+            document.getElementById('cake-screen').classList.remove('active');
+            document.getElementById('final-screen').classList.add('active');
+            
+            // Only Love Hearts generator trigger
+            effectInterval = setInterval(() => {
+                createHeartElement();
+            }, 180); // Quick sleek floating flow
+        }
+
+        // Dedicated Heart-only element layer stacker
+        function createHeartElement() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-element');
+            heart.innerHTML = '❤️';
+            
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = Math.random() * 15 + 26 + 'px'; // Perfect beautiful sizing
+            heart.style.animationDuration = Math.random() * 1.5 + 2.5 + 's';
+            
+            document.body.appendChild(heart);
+            
+            setTimeout(() => { 
+                heart.remove(); 
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
